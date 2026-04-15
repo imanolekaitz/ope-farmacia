@@ -93,7 +93,7 @@ fcFinishBtn.addEventListener('click', finishFlashcards);
 async function autoLoadQuestions() {
     try {
         const urls = [
-            './data/preguntas_comunes.json'
+            './Data/preguntas_comunes.json'
         ];
         
         let allLoadedQuestions = [];
