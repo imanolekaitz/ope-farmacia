@@ -1,4 +1,4 @@
-/** 
+﻿/** 
  * SELECTORES DE PANTALLAS PRINCIPALES
  * Se utilizan para alternar la visibilidad de las diferentes secciones de la aplicación.
  */
@@ -459,7 +459,7 @@ function setRangeAll() {
 
 // --- LOGICA SRS (SM-2) ---
 function updateSRS(questionKey, isCorrect) {
-    let srsData = JSON.parse(localStorage.getItem('appOpeSRS') || '{}');
+    let srsData = JSON.parse(localStorage.getItem('appFarmaciaSRS') || '{}');
     let item = srsData[questionKey] || { interval: 0, easeFactor: 2.5, nextReviewDate: 0 };
     
     if (isCorrect) {
@@ -478,14 +478,14 @@ function updateSRS(questionKey, isCorrect) {
     
     item.nextReviewDate = Date.now() + item.interval * 24 * 60 * 60 * 1000;
     srsData[questionKey] = item;
-    window.appStorage.setItem('appOpeSRS', JSON.stringify(srsData));
+    window.appStorage.setItem('appFarmaciaSRS', JSON.stringify(srsData));
 }
 
 function updateSRSBadge() {
     const srsBadge = document.getElementById('srsBadge');
     if (!srsBadge) return;
     
-    const srsData = JSON.parse(localStorage.getItem('appOpeSRS') || '{}');
+    const srsData = JSON.parse(localStorage.getItem('appFarmaciaSRS') || '{}');
     const now = Date.now();
     let dueCount = 0;
     
@@ -527,9 +527,9 @@ function startTest(mode) {
     }
     
     // Cargar mapas de datos desde localStorage
-    let failuresMap = JSON.parse(localStorage.getItem('antigravity_failures') || '{}');
-    let lastSeenMap = JSON.parse(localStorage.getItem('antigravity_last_seen_test') || '{}');
-    let currentTestCounter = parseInt(localStorage.getItem('antigravity_test_counter') || '0', 10);
+    let failuresMap = JSON.parse(localStorage.getItem('farmacia_failures') || '{}');
+    let lastSeenMap = JSON.parse(localStorage.getItem('farmacia_last_seen') || '{}');
+    let currentTestCounter = parseInt(localStorage.getItem('farmacia_test_counter') || '0', 10);
     
     let repoSelect = document.getElementById('repoSelect');
     let rangeStart = document.getElementById('rangeStart');
@@ -539,7 +539,7 @@ function startTest(mode) {
     
     // Aplicar filtros según el modo
     if (mode === 'favoritas') {
-        const favs = JSON.parse(localStorage.getItem('appOpeFavorites') || '[]');
+        const favs = JSON.parse(localStorage.getItem('appFarmaciaFavorites') || '[]');
         filteredQuestions = filteredQuestions.filter(q => favs.includes(getQuestionKey(q)));
         if (filteredQuestions.length === 0) {
             alert("No tienes preguntas marcadas como favoritas todavía.");
@@ -552,7 +552,7 @@ function startTest(mode) {
             return;
         }
     } else if (mode === 'srs') {
-        const srsData = JSON.parse(localStorage.getItem('appOpeSRS') || '{}');
+        const srsData = JSON.parse(localStorage.getItem('appFarmaciaSRS') || '{}');
         const now = Date.now();
         
         let dueQuestions = filteredQuestions.filter(q => {
@@ -708,7 +708,7 @@ function renderQuestion() {
     
     // Estado de Favorita
     const qKey = getQuestionKey(q);
-    const favs = JSON.parse(localStorage.getItem('appOpeFavorites') || '[]');
+    const favs = JSON.parse(localStorage.getItem('appFarmaciaFavorites') || '[]');
     if (favs.includes(qKey)) {
         toggleFavoriteBtn.style.color = '#facc15';
         toggleFavoriteBtn.innerHTML = '⭐';
@@ -718,7 +718,7 @@ function renderQuestion() {
     }
     
     // Visualización de Notas del usuario
-    const notes = JSON.parse(localStorage.getItem('appOpeNotes') || '{}');
+    const notes = JSON.parse(localStorage.getItem('appFarmaciaNotes') || '{}');
     if (notes[qKey]) {
         userNoteDisplay.textContent = `📝 Mi Nota:\n${notes[qKey]}`;
         userNoteDisplay.classList.remove('hidden');
@@ -823,10 +823,10 @@ function handleAnswerSelected(selectedBtn, selectedLetter, correctLetter) {
         scoreTrackerText.textContent = `Aciertos: ${correctAnswersCount}`;
 
         // Guardar estadísticas de esta pregunta inmediatamente para aprendizaje adaptativo
-        let failuresMap = JSON.parse(localStorage.getItem('antigravity_failures') || '{}');
-        let lastSeenMap = JSON.parse(localStorage.getItem('antigravity_last_seen_test') || '{}');
-        let statsMap = JSON.parse(localStorage.getItem('appOpeQuestionStats') || '{}');
-        let currentTestCounter = parseInt(localStorage.getItem('antigravity_test_counter') || '0', 10);
+        let failuresMap = JSON.parse(localStorage.getItem('farmacia_failures') || '{}');
+        let lastSeenMap = JSON.parse(localStorage.getItem('farmacia_last_seen') || '{}');
+        let statsMap = JSON.parse(localStorage.getItem('appFarmaciaStats') || '{}');
+        let currentTestCounter = parseInt(localStorage.getItem('farmacia_test_counter') || '0', 10);
         
         const q = testQuestions[currentQuestionIndex];
         const hash = getQuestionKey(q);
@@ -851,9 +851,9 @@ function handleAnswerSelected(selectedBtn, selectedLetter, correctLetter) {
             playFeedback('wrong');
         }
         
-        window.appStorage.setItem('antigravity_failures', JSON.stringify(failuresMap));
-        window.appStorage.setItem('antigravity_last_seen_test', JSON.stringify(lastSeenMap));
-        window.appStorage.setItem('appOpeQuestionStats', JSON.stringify(statsMap));
+        window.appStorage.setItem('farmacia_failures', JSON.stringify(failuresMap));
+        window.appStorage.setItem('farmacia_last_seen', JSON.stringify(lastSeenMap));
+        window.appStorage.setItem('appFarmaciaStats', JSON.stringify(statsMap));
 
         // Comprobar logros relacionados con tests normales
         checkAndUnlockAchievements({ context: 'answer' });
@@ -1099,7 +1099,7 @@ function finishTest() {
     });
 
     // Comparativa histórica
-    const historyDataLocal = JSON.parse(localStorage.getItem('antigravity_history') || '[]');
+    const historyDataLocal = JSON.parse(localStorage.getItem('farmacia_history') || '[]');
     let pastCorrects = 0;
     let pastTotals = 0;
     historyDataLocal.forEach(r => { pastCorrects += r.correct; pastTotals += r.total; });
@@ -1264,14 +1264,14 @@ function exitTest() {
  * Guarda los resultados del test en el historial y actualiza las estadísticas de las preguntas.
  */
 function saveResult() {
-    const historyData = JSON.parse(localStorage.getItem('antigravity_history') || '[]');
-    let failuresMap = JSON.parse(localStorage.getItem('antigravity_failures') || '{}');
-    let lastSeenMap = JSON.parse(localStorage.getItem('antigravity_last_seen_test') || '{}');
-    let statsMap = JSON.parse(localStorage.getItem('appOpeQuestionStats') || '{}');
+    const historyData = JSON.parse(localStorage.getItem('farmacia_history') || '[]');
+    let failuresMap = JSON.parse(localStorage.getItem('farmacia_failures') || '{}');
+    let lastSeenMap = JSON.parse(localStorage.getItem('farmacia_last_seen') || '{}');
+    let statsMap = JSON.parse(localStorage.getItem('appFarmaciaStats') || '{}');
     
     // Incrementar contador global de tests realizados
-    let currentTestCounter = parseInt(localStorage.getItem('antigravity_test_counter') || '0', 10) + 1;
-    window.appStorage.setItem('antigravity_test_counter', currentTestCounter.toString());
+    let currentTestCounter = parseInt(localStorage.getItem('farmacia_test_counter') || '0', 10) + 1;
+    window.appStorage.setItem('farmacia_test_counter', currentTestCounter.toString());
     
     let respondidas = 0;
     
@@ -1308,9 +1308,9 @@ function saveResult() {
     }
     
     if (testMode === 'examen') {
-        window.appStorage.setItem('antigravity_failures', JSON.stringify(failuresMap));
-        window.appStorage.setItem('antigravity_last_seen_test', JSON.stringify(lastSeenMap));
-        window.appStorage.setItem('appOpeQuestionStats', JSON.stringify(statsMap));
+        window.appStorage.setItem('farmacia_failures', JSON.stringify(failuresMap));
+        window.appStorage.setItem('farmacia_last_seen', JSON.stringify(lastSeenMap));
+        window.appStorage.setItem('appFarmaciaStats', JSON.stringify(statsMap));
     }
     
     const record = {
@@ -1322,13 +1322,13 @@ function saveResult() {
     };
     
     historyData.push(record);
-    window.appStorage.setItem('antigravity_history', JSON.stringify(historyData));
+    window.appStorage.setItem('farmacia_history', JSON.stringify(historyData));
 
     // Registro de actividad diaria (Heatmap)
     const today = new Date().toISOString().split('T')[0];
-    let activityLog = JSON.parse(localStorage.getItem('appOpeActivityLog') || '{}');
+    let activityLog = JSON.parse(localStorage.getItem('appFarmaciaActivityLog') || '{}');
     activityLog[today] = (activityLog[today] || 0) + respondidas;
-    window.appStorage.setItem('appOpeActivityLog', JSON.stringify(activityLog));
+    window.appStorage.setItem('appFarmaciaActivityLog', JSON.stringify(activityLog));
 }
 
 /**
@@ -1344,7 +1344,7 @@ function showHistory() {
  * y detección de la pregunta más fallada del usuario.
  */
 function renderHistory() {
-    const historyData = JSON.parse(localStorage.getItem('antigravity_history') || '[]');
+    const historyData = JSON.parse(localStorage.getItem('farmacia_history') || '[]');
     
     let totalE = 0, totalT = 0, totalQuestions = 0, totalCorrects = 0;
     const labels = [], dataPoints = [];
@@ -1386,7 +1386,7 @@ function renderHistory() {
     }
 
     // Cobertura del Temario (cuántas preguntas únicas ha visto el usuario)
-    const statsMap = JSON.parse(localStorage.getItem('appOpeQuestionStats') || '{}');
+    const statsMap = JSON.parse(localStorage.getItem('appFarmaciaStats') || '{}');
     const seenCount = Object.keys(statsMap).length;
     const totalAvail = allQuestions.length;
     const coveragePct = totalAvail > 0 ? ((seenCount / totalAvail) * 100).toFixed(1) : 0;
@@ -1445,7 +1445,7 @@ function renderHistory() {
     });
 
     // Detección de la pregunta más fallada (Némesis)
-    const failuresMap = JSON.parse(localStorage.getItem('antigravity_failures') || '{}');
+    const failuresMap = JSON.parse(localStorage.getItem('farmacia_failures') || '{}');
     let maxFailures = 0;
     let worstQuestionKey = null;
     
@@ -1493,11 +1493,11 @@ function clearHistory() {
     const res = confirm("¿Estás seguro de que quieres borrar todo el historial? Esto no se puede deshacer.");
     setTimeout(() => { isConfirmDialogActive = false; }, 300);
     if (res) {
-        localStorage.removeItem('antigravity_history');
-        localStorage.removeItem('antigravity_failures');
-        localStorage.removeItem('antigravity_test_counter');
-        localStorage.removeItem('antigravity_last_seen_test');
-        localStorage.removeItem('antigravity_daily_flashcards');
+        localStorage.removeItem('farmacia_history');
+        localStorage.removeItem('farmacia_failures');
+        localStorage.removeItem('farmacia_test_counter');
+        localStorage.removeItem('farmacia_last_seen');
+        localStorage.removeItem('farmacia_flashcards');
         renderHistory();
     }
 }
@@ -1509,7 +1509,7 @@ function clearHistory() {
  */
 function getDailyFlashcards() {
     const todayStr = new Date().toDateString();
-    const stored = JSON.parse(localStorage.getItem('antigravity_daily_flashcards') || '{}');
+    const stored = JSON.parse(localStorage.getItem('farmacia_flashcards') || '{}');
     
     // Si ya existen para hoy y son válidas, se reutilizan
     if (stored.date === todayStr && stored.questions && stored.questions.length > 0) {
@@ -1517,7 +1517,7 @@ function getDailyFlashcards() {
     }
 
     // Generar nuevas flashcards
-    let failuresMap = JSON.parse(localStorage.getItem('antigravity_failures') || '{}');
+    let failuresMap = JSON.parse(localStorage.getItem('farmacia_failures') || '{}');
     let repoSelect = document.getElementById('repoSelect');
     let rangeStart = document.getElementById('rangeStart');
     let rangeEnd = document.getElementById('rangeEnd');
@@ -1567,7 +1567,7 @@ function getDailyFlashcards() {
         }
     }
     
-    window.appStorage.setItem('antigravity_daily_flashcards', JSON.stringify({
+    window.appStorage.setItem('farmacia_flashcards', JSON.stringify({
         date: todayStr,
         questions: fcs
     }));
@@ -1697,7 +1697,7 @@ function sendErrorEmail() {
 function toggleFavoriteAction(q, btnElement) {
     if (!q) return;
     const qKey = getQuestionKey(q);
-    let favs = JSON.parse(localStorage.getItem('appOpeFavorites') || '[]');
+    let favs = JSON.parse(localStorage.getItem('appFarmaciaFavorites') || '[]');
     
     if (favs.includes(qKey)) {
         favs = favs.filter(f => f !== qKey);
@@ -1712,7 +1712,7 @@ function toggleFavoriteAction(q, btnElement) {
             btnElement.innerHTML = btnElement.id === 'statsToggleFavBtn' ? '⭐ Favorita' : '⭐';
         }
     }
-    window.appStorage.setItem('appOpeFavorites', JSON.stringify(favs));
+    window.appStorage.setItem('appFarmaciaFavorites', JSON.stringify(favs));
     
     // Comprobar logro de coleccionista
     checkAndUnlockAchievements({ context: 'favorite' });
@@ -1744,7 +1744,7 @@ function toggleFavorite() {
 function openNoteModalAction(q) {
     if (!q) return;
     currentActiveQuestion = q;
-    const notes = JSON.parse(localStorage.getItem('appOpeNotes') || '{}');
+    const notes = JSON.parse(localStorage.getItem('appFarmaciaNotes') || '{}');
     const qKey = getQuestionKey(q);
     
     noteTextarea.value = notes[qKey] || '';
@@ -1770,14 +1770,14 @@ function saveNote() {
     }
     if (!q) return;
     
-    const notes = JSON.parse(localStorage.getItem('appOpeNotes') || '{}');
+    const notes = JSON.parse(localStorage.getItem('appFarmaciaNotes') || '{}');
     const val = noteTextarea.value.trim();
     const qKey = getQuestionKey(q);
     
     if (val) notes[qKey] = val;
     else delete notes[qKey];
     
-    window.appStorage.setItem('appOpeNotes', JSON.stringify(notes));
+    window.appStorage.setItem('appFarmaciaNotes', JSON.stringify(notes));
     noteModal.style.display = 'none';
     
     // Refrescar UI pertinente
@@ -1797,10 +1797,10 @@ function deleteNote() {
     }
     if (!q) return;
     
-    const notes = JSON.parse(localStorage.getItem('appOpeNotes') || '{}');
+    const notes = JSON.parse(localStorage.getItem('appFarmaciaNotes') || '{}');
     const qKey = getQuestionKey(q);
     delete notes[qKey];
-    window.appStorage.setItem('appOpeNotes', JSON.stringify(notes));
+    window.appStorage.setItem('appFarmaciaNotes', JSON.stringify(notes));
     noteModal.style.display = 'none';
     
     if (testScreen.classList.contains('active') && testQuestions[currentQuestionIndex] && getQuestionKey(testQuestions[currentQuestionIndex]) === qKey) {
@@ -1872,7 +1872,7 @@ function performSearchById() {
  * Filtra y muestra todas las preguntas guardadas en Favoritos.
  */
 function performSearchFavorites() {
-    const favs = JSON.parse(localStorage.getItem('appOpeFavorites') || '[]');
+    const favs = JSON.parse(localStorage.getItem('appFarmaciaFavorites') || '[]');
     if (favs.length === 0) {
         searchResultCount.textContent = '0';
         searchResultsContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary); margin-top: 2rem;">No tienes preguntas favoritas guardadas.</p>';
@@ -1955,11 +1955,11 @@ function openStatsModal(q) {
     statsCorrectAnswer.textContent = `Opción ${correctLetter}: ${q.opciones[correctLetter]}`;
     
     // Cargar estadísticas generales
-    let statsMap = JSON.parse(localStorage.getItem('appOpeQuestionStats') || '{}');
+    let statsMap = JSON.parse(localStorage.getItem('appFarmaciaStats') || '{}');
     const stats = statsMap[qKey] || { seen: 0, correct: 0, wrong: 0 };
     
     // Cargar historial de fallos específicos
-    let failuresMap = JSON.parse(localStorage.getItem('antigravity_failures') || '{}');
+    let failuresMap = JSON.parse(localStorage.getItem('farmacia_failures') || '{}');
     let historicalWrong = failuresMap[qKey] || 0;
     
     // Mostrar estadísticas consolidadas
@@ -1968,7 +1968,7 @@ function openStatsModal(q) {
     statsWrong.textContent = Math.max(stats.wrong, historicalWrong);
     
     // Actualizar estado visual de favorita
-    let favs = JSON.parse(localStorage.getItem('appOpeFavorites') || '[]');
+    let favs = JSON.parse(localStorage.getItem('appFarmaciaFavorites') || '[]');
     if (favs.includes(qKey)) {
         statsToggleFavBtn.style.color = '#facc15';
         statsToggleFavBtn.innerHTML = '⭐ Favorita';
@@ -1978,7 +1978,7 @@ function openStatsModal(q) {
     }
     
     // Actualizar estado visual de notas
-    let notes = JSON.parse(localStorage.getItem('appOpeNotes') || '{}');
+    let notes = JSON.parse(localStorage.getItem('appFarmaciaNotes') || '{}');
     if (notes[qKey]) {
         statsOpenNoteBtn.style.color = '#6366f1';
         statsOpenNoteBtn.innerHTML = '📝 Ver Mis Notas';
@@ -2004,7 +2004,7 @@ function pauseTest() {
         date: new Date().toISOString()
     };
     
-    window.appStorage.setItem('appOpeSavedSession', JSON.stringify(session));
+    window.appStorage.setItem('appFarmaciaSavedSession', JSON.stringify(session));
     if (examTimerInterval) {
         clearInterval(examTimerInterval);
         examTimerInterval = null;
@@ -2016,7 +2016,7 @@ function pauseTest() {
 }
 
 function checkSavedSession() {
-    const session = JSON.parse(localStorage.getItem('appOpeSavedSession'));
+    const session = JSON.parse(localStorage.getItem('appFarmaciaSavedSession'));
     if (session) {
         resumeTestBtn.classList.remove('hidden');
     } else {
@@ -2025,7 +2025,7 @@ function checkSavedSession() {
 }
 
 function resumeSavedTest() {
-    const session = JSON.parse(localStorage.getItem('appOpeSavedSession'));
+    const session = JSON.parse(localStorage.getItem('appFarmaciaSavedSession'));
     if (!session) return;
     
     testQuestions = session.testQuestions;
@@ -2064,7 +2064,7 @@ function resumeSavedTest() {
         if (resumeFlagBtn) resumeFlagBtn.style.display = 'none';
     }
     
-    localStorage.removeItem('appOpeSavedSession');
+    localStorage.removeItem('appFarmaciaSavedSession');
     checkSavedSession();
     
     switchScreen(testScreen);
@@ -2077,7 +2077,7 @@ function incrementStreak() {
     updateStreakUI();
 
     const today = new Date().toDateString();
-    let streakData = JSON.parse(localStorage.getItem('appOpeStudyStreak') || '{"streak": 0, "lastDate": ""}');
+    let streakData = JSON.parse(localStorage.getItem('appFarmaciaStreak') || '{"streak": 0, "lastDate": ""}');
     
     if (streakData.lastDate === today) {
         // Ya ha estudiado hoy
@@ -2100,7 +2100,7 @@ function incrementStreak() {
     }
     
     streakData.lastDate = today;
-    window.appStorage.setItem('appOpeStudyStreak', JSON.stringify(streakData));
+    window.appStorage.setItem('appFarmaciaStreak', JSON.stringify(streakData));
     updateStreakUI();
     
     // Comprobar logro de racha
@@ -2108,7 +2108,7 @@ function incrementStreak() {
 }
 
 function updateStreakUI() {
-    const streakData = JSON.parse(localStorage.getItem('appOpeStudyStreak') || '{"streak": 0, "lastDate": ""}');
+    const streakData = JSON.parse(localStorage.getItem('appFarmaciaStreak') || '{"streak": 0, "lastDate": ""}');
     
     if (streakData.lastDate) {
         const today = new Date().toDateString();
@@ -2118,19 +2118,19 @@ function updateStreakUI() {
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
         
         if (diffDays > 1) {
-            let freezes = parseInt(localStorage.getItem('appOpe_streak_freezes') || '0', 10);
+            let freezes = parseInt(localStorage.getItem('appFarmacia_streak_freezes') || '0', 10);
             const daysMissed = diffDays - 1;
             
             if (freezes >= daysMissed) {
                 // Tienen suficientes protectores
                 freezes -= daysMissed;
-                localStorage.setItem('appOpe_streak_freezes', freezes);
+                localStorage.setItem('appFarmacia_streak_freezes', freezes);
                 
                 // Actualizar lastDate para simular que estudiaron ayer
                 const yesterday = new Date();
                 yesterday.setDate(yesterday.getDate() - 1);
                 streakData.lastDate = yesterday.toDateString();
-                window.appStorage.setItem('appOpeStudyStreak', JSON.stringify(streakData));
+                window.appStorage.setItem('appFarmaciaStreak', JSON.stringify(streakData));
                 
                 if (typeof showAchievementToast === 'function') {
                     showAchievementToast({ icon: '🧊', name: 'Racha Salvada', desc: `Se usaron ${daysMissed} protectores.` });
@@ -2139,7 +2139,7 @@ function updateStreakUI() {
             } else {
                 // Perdió la racha ayer o antes
                 streakData.streak = 0;
-                window.appStorage.setItem('appOpeStudyStreak', JSON.stringify(streakData));
+                window.appStorage.setItem('appFarmaciaStreak', JSON.stringify(streakData));
             }
         }
     }
@@ -2157,7 +2157,7 @@ function updateStreakUI() {
  * Necesario para mantener la consistencia entre dispositivos y actualizaciones.
  */
 function migrateStorageKeys() {
-    if (localStorage.getItem('appOpe_migrated_v2')) return;
+    if (localStorage.getItem('appFarmacia_migrated_v2')) return;
     if (allQuestions.length === 0) return;
     
     const textToKey = {};
@@ -2175,18 +2175,18 @@ function migrateStorageKeys() {
     }
     
     // Migrar favoritos (formato array)
-    let favs = JSON.parse(localStorage.getItem('appOpeFavorites') || '[]');
+    let favs = JSON.parse(localStorage.getItem('appFarmaciaFavorites') || '[]');
     if (favs.length > 0 && favs[0] && favs[0].length > 30) {
         favs = favs.map(text => textToKey[text] || text);
-        window.appStorage.setItem('appOpeFavorites', JSON.stringify(favs));
+        window.appStorage.setItem('appFarmaciaFavorites', JSON.stringify(favs));
     }
     
-    migrateObject('appOpeNotes');
-    migrateObject('antigravity_failures');
-    migrateObject('antigravity_last_seen_test');
-    migrateObject('appOpeQuestionStats');
+    migrateObject('appFarmaciaNotes');
+    migrateObject('farmacia_failures');
+    migrateObject('farmacia_last_seen');
+    migrateObject('appFarmaciaStats');
     
-    localStorage.setItem('appOpe_migrated_v2', 'true');
+    localStorage.setItem('appFarmacia_migrated_v2', 'true');
     console.log('Storage keys migrated to v2 format.');
 }
 
@@ -2199,14 +2199,14 @@ function toggleTheme() {
     body.classList.toggle('light-mode');
     const isLight = body.classList.contains('light-mode');
     btn.textContent = isLight ? '\u2600\ufe0f' : '\ud83c\udf19';
-    window.appStorage.setItem('appOpeTheme', isLight ? 'light' : 'dark');
+    window.appStorage.setItem('appFarmaciaTheme', isLight ? 'light' : 'dark');
 }
 
 /**
  * Aplica el tema guardado en el arranque.
  */
 function applyTheme() {
-    const saved = localStorage.getItem('appOpeTheme');
+    const saved = localStorage.getItem('appFarmaciaTheme');
     const btn = document.getElementById('themeToggleBtn');
     if (saved === 'light') {
         document.body.classList.add('light-mode');
@@ -2468,39 +2468,39 @@ function retryFailedQuestions() {
  */
 const ACHIEVEMENTS = [
     // Tests Completados
-    { id: 'primer_test', icon: '🥉', name: 'Primer Test', desc: 'Completa tu primer test o examen.', check: () => JSON.parse(localStorage.getItem('antigravity_history') || '[]').length >= 1 },
-    { id: 'decena', icon: '📖', name: 'Estudiante Constante', desc: 'Completa 10 tests o exámenes.', check: () => JSON.parse(localStorage.getItem('antigravity_history') || '[]').length >= 10 },
-    { id: 'centena', icon: '💯', name: 'Centurión', desc: 'Completa 100 tests o exámenes.', check: () => JSON.parse(localStorage.getItem('antigravity_history') || '[]').length >= 100 },
-    { id: 'milenio', icon: '🏛️', name: 'Leyenda Viva', desc: 'Completa 1000 tests o exámenes.', check: () => JSON.parse(localStorage.getItem('antigravity_history') || '[]').length >= 1000 },
+    { id: 'primer_test', icon: '🥉', name: 'Primer Test', desc: 'Completa tu primer test o examen.', check: () => JSON.parse(localStorage.getItem('farmacia_history') || '[]').length >= 1 },
+    { id: 'decena', icon: '📖', name: 'Estudiante Constante', desc: 'Completa 10 tests o exámenes.', check: () => JSON.parse(localStorage.getItem('farmacia_history') || '[]').length >= 10 },
+    { id: 'centena', icon: '💯', name: 'Centurión', desc: 'Completa 100 tests o exámenes.', check: () => JSON.parse(localStorage.getItem('farmacia_history') || '[]').length >= 100 },
+    { id: 'milenio', icon: '🏛️', name: 'Leyenda Viva', desc: 'Completa 1000 tests o exámenes.', check: () => JSON.parse(localStorage.getItem('farmacia_history') || '[]').length >= 1000 },
     
     // Rendimiento y Precisión
-    { id: 'francotirador', icon: '🎯', name: 'Francotirador', desc: 'Consigue un 100% en un test de 50+ pregs.', check: (ctx) => (ctx && ctx.context === 'finish' && ctx.percentage === 100 && ctx.total >= 50) || JSON.parse(localStorage.getItem('antigravity_history') || '[]').some(r => r.total >= 50 && r.correct === r.total && r.answered === r.total) },
-    { id: 'perfeccionista', icon: '💎', name: 'Perfeccionista', desc: '10 preguntas seguidas correctas en un test.', check: () => !!localStorage.getItem('appOpeAch_streak10') },
-    { id: 'dios_test', icon: '⚡', name: 'Modo Dios', desc: '50 preguntas seguidas correctas en un test.', check: () => !!localStorage.getItem('appOpeAch_streak50') },
+    { id: 'francotirador', icon: '🎯', name: 'Francotirador', desc: 'Consigue un 100% en un test de 50+ pregs.', check: (ctx) => (ctx && ctx.context === 'finish' && ctx.percentage === 100 && ctx.total >= 50) || JSON.parse(localStorage.getItem('farmacia_history') || '[]').some(r => r.total >= 50 && r.correct === r.total && r.answered === r.total) },
+    { id: 'perfeccionista', icon: '💎', name: 'Perfeccionista', desc: '10 preguntas seguidas correctas en un test.', check: () => !!localStorage.getItem('appFarmaciaAch_streak10') },
+    { id: 'dios_test', icon: '⚡', name: 'Modo Dios', desc: '50 preguntas seguidas correctas en un test.', check: () => !!localStorage.getItem('appFarmaciaAch_streak50') },
     { id: 'maraton', icon: '🏃', name: 'Maratón OPE', desc: 'Completa un Modo Examen (100 pregs).', check: (ctx) => ctx && ctx.context === 'finish' && ctx.total >= 100 && ctx.mode === 'examen' },
     
     // Rachas
-    { id: 'racha_3', icon: '🔥', name: 'Calentando', desc: '3 días seguidos estudiando.', check: (ctx) => (ctx && ctx.context === 'streak' && ctx.streak >= 3) || JSON.parse(localStorage.getItem('appOpeStudyStreak') || '{"streak":0}').streak >= 3 },
-    { id: 'racha_7', icon: '📅', name: 'Semana Perfecta', desc: '7 días seguidos estudiando.', check: (ctx) => (ctx && ctx.context === 'streak' && ctx.streak >= 7) || JSON.parse(localStorage.getItem('appOpeStudyStreak') || '{"streak":0}').streak >= 7 },
-    { id: 'racha_30', icon: '🗓️', name: 'Mes Imparable', desc: '30 días seguidos estudiando.', check: (ctx) => (ctx && ctx.context === 'streak' && ctx.streak >= 30) || JSON.parse(localStorage.getItem('appOpeStudyStreak') || '{"streak":0}').streak >= 30 },
-    { id: 'racha_100', icon: '👑', name: 'Opositor Legendario', desc: '100 días seguidos estudiando.', check: (ctx) => (ctx && ctx.context === 'streak' && ctx.streak >= 100) || JSON.parse(localStorage.getItem('appOpeStudyStreak') || '{"streak":0}').streak >= 100 },
+    { id: 'racha_3', icon: '🔥', name: 'Calentando', desc: '3 días seguidos estudiando.', check: (ctx) => (ctx && ctx.context === 'streak' && ctx.streak >= 3) || JSON.parse(localStorage.getItem('appFarmaciaStreak') || '{"streak":0}').streak >= 3 },
+    { id: 'racha_7', icon: '📅', name: 'Semana Perfecta', desc: '7 días seguidos estudiando.', check: (ctx) => (ctx && ctx.context === 'streak' && ctx.streak >= 7) || JSON.parse(localStorage.getItem('appFarmaciaStreak') || '{"streak":0}').streak >= 7 },
+    { id: 'racha_30', icon: '🗓️', name: 'Mes Imparable', desc: '30 días seguidos estudiando.', check: (ctx) => (ctx && ctx.context === 'streak' && ctx.streak >= 30) || JSON.parse(localStorage.getItem('appFarmaciaStreak') || '{"streak":0}').streak >= 30 },
+    { id: 'racha_100', icon: '👑', name: 'Opositor Legendario', desc: '100 días seguidos estudiando.', check: (ctx) => (ctx && ctx.context === 'streak' && ctx.streak >= 100) || JSON.parse(localStorage.getItem('appFarmaciaStreak') || '{"streak":0}').streak >= 100 },
     
     // Temario
-    { id: 'explorador', icon: '🧭', name: 'Explorador', desc: 'Vistas 100 preguntas distintas.', check: () => Object.keys(JSON.parse(localStorage.getItem('appOpeQuestionStats') || '{}')).length >= 100 },
-    { id: 'enciclopedia', icon: '📚', name: 'Enciclopedia', desc: 'Vistas 500 preguntas distintas.', check: () => Object.keys(JSON.parse(localStorage.getItem('appOpeQuestionStats') || '{}')).length >= 500 },
-    { id: 'omnisciente', icon: '👁️', name: 'Omnisciente', desc: 'Vistas todas las preguntas del repositorio.', check: () => allQuestions.length > 0 && Object.keys(JSON.parse(localStorage.getItem('appOpeQuestionStats') || '{}')).length >= allQuestions.length },
+    { id: 'explorador', icon: '🧭', name: 'Explorador', desc: 'Vistas 100 preguntas distintas.', check: () => Object.keys(JSON.parse(localStorage.getItem('appFarmaciaStats') || '{}')).length >= 100 },
+    { id: 'enciclopedia', icon: '📚', name: 'Enciclopedia', desc: 'Vistas 500 preguntas distintas.', check: () => Object.keys(JSON.parse(localStorage.getItem('appFarmaciaStats') || '{}')).length >= 500 },
+    { id: 'omnisciente', icon: '👁️', name: 'Omnisciente', desc: 'Vistas todas las preguntas del repositorio.', check: () => allQuestions.length > 0 && Object.keys(JSON.parse(localStorage.getItem('appFarmaciaStats') || '{}')).length >= allQuestions.length },
     
     // Específicos
-    { id: 'coleccionista', icon: '⭐', name: 'Coleccionista', desc: 'Marca 50 preguntas como favoritas.', check: () => JSON.parse(localStorage.getItem('appOpeFavorites') || '[]').length >= 50 },
-    { id: 'estratega', icon: '📝', name: 'Estratega', desc: 'Guarda 20 notas o reglas mnemotécnicas.', check: () => Object.keys(JSON.parse(localStorage.getItem('appOpeNotes') || '{}')).length >= 20 },
+    { id: 'coleccionista', icon: '⭐', name: 'Coleccionista', desc: 'Marca 50 preguntas como favoritas.', check: () => JSON.parse(localStorage.getItem('appFarmaciaFavorites') || '[]').length >= 50 },
+    { id: 'estratega', icon: '📝', name: 'Estratega', desc: 'Guarda 20 notas o reglas mnemotécnicas.', check: () => Object.keys(JSON.parse(localStorage.getItem('appFarmaciaNotes') || '{}')).length >= 20 },
     { id: 'madrugador', icon: '🌅', name: 'Madrugador', desc: 'Completa un test entre 5:00 y 8:00 AM.', check: (ctx) => { if (ctx && ctx.context === 'finish') { const h = new Date().getHours(); return h >= 5 && h < 8; } return false; } },
     { id: 'noctambulo', icon: '🦉', name: 'Noctámbulo', desc: 'Completa un test entre 0:00 y 4:00 AM.', check: (ctx) => { if (ctx && ctx.context === 'finish') { const h = new Date().getHours(); return h >= 0 && h < 4; } return false; } },
     { id: 'flashcards', icon: '🎴', name: 'Memoria Visual', desc: 'Completa tu primera sesión de flashcards.', check: (ctx) => ctx && ctx.context === 'flashcards_done' },
     { id: 'redencion', icon: '🔁', name: 'Redención', desc: 'Aprueba un Test de Falladas.', check: (ctx) => ctx && ctx.context === 'finish' && ctx.mode === 'falladas' && ctx.percentage >= 50 }
 ];
 
-function loadUnlockedAchievements() { return JSON.parse(localStorage.getItem('appOpeAchievements') || '{}'); }
-function saveUnlockedAchievements(data) { window.appStorage.setItem('appOpeAchievements', JSON.stringify(data)); }
+function loadUnlockedAchievements() { return JSON.parse(localStorage.getItem('appFarmaciaAchievements') || '{}'); }
+function saveUnlockedAchievements(data) { window.appStorage.setItem('appFarmaciaAchievements', JSON.stringify(data)); }
 
 let achievementToastQueue = [];
 let achievementToastActive = false;
@@ -2516,8 +2516,8 @@ function checkAndUnlockAchievements(ctx = {}) {
             if (userAnswers[i] && testQuestions[i] && userAnswers[i] === testQuestions[i].respuestaCorrecta) streak++;
             else streak = 0;
         }
-        if (streak >= 10) window.appStorage.setItem('appOpeAch_streak10', '1');
-        if (streak >= 50) window.appStorage.setItem('appOpeAch_streak50', '1');
+        if (streak >= 10) window.appStorage.setItem('appFarmaciaAch_streak10', '1');
+        if (streak >= 50) window.appStorage.setItem('appFarmaciaAch_streak50', '1');
     }
 
     const unlocked = loadUnlockedAchievements();
@@ -2794,33 +2794,34 @@ window.addEventListener('DOMContentLoaded', () => {
 // ===== GAMIFICACIÓN (FASE 2) =====
 
 const RANKS = [
-    { xp: 0, name: 'Aspirante' },
-    { xp: 1000, name: 'Estudiante de 1º' },
-    { xp: 2000, name: 'Estudiante de 2º' },
-    { xp: 3500, name: 'Estudiante de 3º' },
-    { xp: 5000, name: 'Estudiante de 4º' },
-    { xp: 7500, name: 'Egresado Reciente' },
-    { xp: 10000, name: 'Opositor Novato' },
-    { xp: 15000, name: 'Opositor Motivado' },
-    { xp: 20000, name: 'Enfermero/a Suplente' },
-    { xp: 25000, name: 'Enfermero/a Adjunto/a' },
-    { xp: 30000, name: 'Opositor Veterano' },
-    { xp: 40000, name: 'Experto en Exámenes' },
-    { xp: 50000, name: 'EIR 1º Año' },
-    { xp: 60000, name: 'EIR 2º Año' },
-    { xp: 75000, name: 'Especialista' },
-    { xp: 90000, name: 'Supervisor/a' },
-    { xp: 110000, name: 'Coordinador/a' },
-    { xp: 130000, name: 'Jefe/a de Bloque' },
-    { xp: 150000, name: 'Director/a de Enfermería' },
+    { xp: 0,      name: 'Aspirante' },
+    { xp: 1000,   name: 'Auxiliar de Farmacia' },
+    { xp: 2000,   name: 'Técnico en Farmacia' },
+    { xp: 3500,   name: 'Dispensador/a' },
+    { xp: 5000,   name: 'Opositor/a Novato' },
+    { xp: 7500,   name: 'Opositor/a Motivado' },
+    { xp: 10000,  name: 'Opositor/a Veterano' },
+    { xp: 15000,  name: 'Farmacéutico/a Interino' },
+    { xp: 20000,  name: 'Farmacéutico/a Adjunto' },
+    { xp: 25000,  name: 'Farmacéutico/a de Guardia' },
+    { xp: 30000,  name: 'Experto en Exámenes' },
+    { xp: 40000,  name: 'Especialista FIR 1º' },
+    { xp: 50000,  name: 'Especialista FIR 2º' },
+    { xp: 60000,  name: 'Farmacéutico/a Especialista' },
+    { xp: 75000,  name: 'Jefe/a de Servicio' },
+    { xp: 90000,  name: 'Responsable de Unidad' },
+    { xp: 110000, name: 'Coordinador/a de Farmacia' },
+    { xp: 130000, name: 'Director/a de Farmacia' },
+    { xp: 150000, name: 'Farmacéutico/a Titular OPE' },
     { xp: 200000, name: 'Plaza Fija (OPE)' },
     { xp: 300000, name: 'Tribunal OPE' },
-    { xp: 500000, name: 'Ministro/a de Sanidad' }
+    { xp: 500000, name: 'Inspector/a de Farmacia' }
 ];
 
+
 function initGamification() {
-    const xp = parseInt(localStorage.getItem('appOpe_XP') || '0', 10);
-    const freezes = parseInt(localStorage.getItem('appOpe_streak_freezes') || '0', 10);
+    const xp = parseInt(localStorage.getItem('appFarmacia_XP') || '0', 10);
+    const freezes = parseInt(localStorage.getItem('appFarmacia_streak_freezes') || '0', 10);
     
     // Ranks
     let rankObj = RANKS[0];
@@ -2871,7 +2872,7 @@ function renderActivityHeatmap() {
     if (!heatmapContainer) return;
     heatmapContainer.innerHTML = '';
     
-    let activityLog = JSON.parse(localStorage.getItem('appOpeActivityLog') || '{}');
+    let activityLog = JSON.parse(localStorage.getItem('appFarmaciaActivityLog') || '{}');
     
     // Generar últimos 60 días
     const today = new Date();
@@ -2900,9 +2901,9 @@ function renderActivityHeatmap() {
 
 function awardXP(amount) {
     if (amount <= 0) return;
-    let xp = parseInt(localStorage.getItem('appOpe_XP') || '0', 10);
+    let xp = parseInt(localStorage.getItem('appFarmacia_XP') || '0', 10);
     xp += amount;
-    localStorage.setItem('appOpe_XP', xp);
+    localStorage.setItem('appFarmacia_XP', xp);
     
     if (typeof showAchievementToast === 'function') {
         showAchievementToast({ icon: '✨', name: `+${amount} XP`, desc: 'Sigue sumando puntos.' });
@@ -2918,7 +2919,7 @@ function gamificationRewardXP(correct, total, mode) {
 }
 
 function updateTemarioHealth() {
-    const failuresMap = JSON.parse(localStorage.getItem('antigravity_failures') || '{}');
+    const failuresMap = JSON.parse(localStorage.getItem('farmacia_failures') || '{}');
     const totalQuestions = allQuestions.length || 1;
     let failedCount = Object.keys(failuresMap).filter(k => failuresMap[k] > 0).length;
     
@@ -2939,13 +2940,13 @@ function updateTemarioHealth() {
 }
 
 window.buyStreakFreeze = function() {
-    let xp = parseInt(localStorage.getItem('appOpe_XP') || '0', 10);
+    let xp = parseInt(localStorage.getItem('appFarmacia_XP') || '0', 10);
     if (xp >= 500) {
         if(confirm("¿Quieres gastar 500 XP para comprar 1 Protector de Racha?")) {
             xp -= 500;
-            localStorage.setItem('appOpe_XP', xp);
-            let freezes = parseInt(localStorage.getItem('appOpe_streak_freezes') || '0', 10);
-            localStorage.setItem('appOpe_streak_freezes', freezes + 1);
+            localStorage.setItem('appFarmacia_XP', xp);
+            let freezes = parseInt(localStorage.getItem('appFarmacia_streak_freezes') || '0', 10);
+            localStorage.setItem('appFarmacia_streak_freezes', freezes + 1);
             initGamification();
             showAchievementToast({ icon: '🧊', name: 'Protector Adquirido', desc: 'Tienes un nuevo protector de racha.' });
         }
@@ -2963,15 +2964,15 @@ const possibleQuests = [
 
 function checkDailyQuests(event = 'init', data = null) {
     const today = new Date().toDateString();
-    const storedDate = localStorage.getItem('appOpe_daily_quests_date');
-    let quests = JSON.parse(localStorage.getItem('appOpe_daily_quests') || '[]');
+    const storedDate = localStorage.getItem('appFarmacia_quests_date');
+    let quests = JSON.parse(localStorage.getItem('appFarmacia_quests') || '[]');
     
     if (storedDate !== today || quests.length === 0) {
         // Generar nuevas misiones (shuffle de posibles)
         const shuffled = [...possibleQuests].sort(() => 0.5 - Math.random());
         quests = shuffled.slice(0, 3).map(q => ({ ...q, progress: 0, completed: false, claimed: false }));
-        localStorage.setItem('appOpe_daily_quests_date', today);
-        localStorage.setItem('appOpe_daily_quests', JSON.stringify(quests));
+        localStorage.setItem('appFarmacia_quests_date', today);
+        localStorage.setItem('appFarmacia_quests', JSON.stringify(quests));
     }
     
     // Procesar progreso
@@ -3000,7 +3001,7 @@ function checkDailyQuests(event = 'init', data = null) {
                 }
             }
         });
-        if (updated) localStorage.setItem('appOpe_daily_quests', JSON.stringify(quests));
+        if (updated) localStorage.setItem('appFarmacia_quests', JSON.stringify(quests));
     }
     
     renderDailyQuests(quests);
@@ -3047,10 +3048,10 @@ function renderDailyQuests(quests) {
 }
 
 window.claimQuestReward = function(idx) {
-    let quests = JSON.parse(localStorage.getItem('appOpe_daily_quests') || '[]');
+    let quests = JSON.parse(localStorage.getItem('appFarmacia_quests') || '[]');
     if (quests[idx] && quests[idx].completed && !quests[idx].claimed) {
         quests[idx].claimed = true;
-        localStorage.setItem('appOpe_daily_quests', JSON.stringify(quests));
+        localStorage.setItem('appFarmacia_quests', JSON.stringify(quests));
         awardXP(quests[idx].reward);
         renderDailyQuests(quests);
     }
@@ -3061,9 +3062,9 @@ function openSettings() {
     if (!settingsModal) return;
     settingsModal.classList.remove('hidden');
     
-    const notifsEnabled = localStorage.getItem('appOpeNotifsEnabled') === 'true';
-    const notifTime = localStorage.getItem('appOpeNotifTime') || '10:00';
-    const soundEnabled = localStorage.getItem('appOpeSoundEnabled') !== 'false'; // Default true
+    const notifsEnabled = localStorage.getItem('appFarmaciaNotifs') === 'true';
+    const notifTime = localStorage.getItem('appFarmaciaNotifTime') || '10:00';
+    const soundEnabled = localStorage.getItem('appFarmaciaSound') !== 'false'; // Default true
     
     if (notifToggle) notifToggle.checked = notifsEnabled;
     if (notifTimeInput) notifTimeInput.value = notifTime;
@@ -3076,16 +3077,16 @@ function openSettings() {
 
 function saveSettings() {
     if (notifToggle) {
-        localStorage.setItem('appOpeNotifsEnabled', notifToggle.checked);
+        localStorage.setItem('appFarmaciaNotifs', notifToggle.checked);
         if (notifToggle.checked && 'Notification' in window && Notification.permission !== 'granted') {
             Notification.requestPermission();
         }
     }
     if (notifTimeInput && notifTimeInput.value) {
-        localStorage.setItem('appOpeNotifTime', notifTimeInput.value);
+        localStorage.setItem('appFarmaciaNotifTime', notifTimeInput.value);
     }
     if (soundToggle) {
-        localStorage.setItem('appOpeSoundEnabled', soundToggle.checked);
+        localStorage.setItem('appFarmaciaSound', soundToggle.checked);
     }
     
     if (settingsModal) settingsModal.classList.add('hidden');
@@ -3093,10 +3094,10 @@ function saveSettings() {
 }
 
 function checkAndSendNotifications() {
-    const notifsEnabled = localStorage.getItem('appOpeNotifsEnabled') === 'true';
+    const notifsEnabled = localStorage.getItem('appFarmaciaNotifs') === 'true';
     if (!notifsEnabled || !('Notification' in window) || Notification.permission !== 'granted') return;
     
-    const notifTime = localStorage.getItem('appOpeNotifTime');
+    const notifTime = localStorage.getItem('appFarmaciaNotifTime');
     if (!notifTime) return;
     
     const now = new Date();
@@ -3105,12 +3106,12 @@ function checkAndSendNotifications() {
     const currentTimeStr = `${currentHour}:${currentMinute}`;
     
     // Solo lanzar notificacion si coincide exactamente en el minuto (y evitar duplicados)
-    const lastNotifDate = localStorage.getItem('appOpeLastNotifDate');
+    const lastNotifDate = localStorage.getItem('appFarmaciaLastNotif');
     const todayStr = now.toDateString();
     
     if (currentTimeStr === notifTime && lastNotifDate !== todayStr) {
         // Verificar si hay preguntas SRS pendientes
-        const srsData = JSON.parse(localStorage.getItem('appOpeSRS') || '{}');
+        const srsData = JSON.parse(localStorage.getItem('appFarmaciaSRS') || '{}');
         const tsNow = Date.now();
         let dueCount = 0;
         
@@ -3121,11 +3122,11 @@ function checkAndSendNotifications() {
         }
         
         if (dueCount > 0) {
-            new Notification('OPE Enfermería', { 
+            new Notification('OPE Farmacia', { 
                 body: `¡No pierdas tu racha! Tienes ${dueCount} repasos pendientes.`,
                 icon: './icon.png'
             });
-            localStorage.setItem('appOpeLastNotifDate', todayStr);
+            localStorage.setItem('appFarmaciaLastNotif', todayStr);
         }
     }
 }
@@ -3166,12 +3167,12 @@ function shareResult() {
     const correct = lastTestResults.correct;
     const netPercentage = ((lastTestResults.netScore / total) * 100).toFixed(1);
     
-    let text = `¡Acabo de completar un test en OPE Enfermería!\n✅ Aciertos: ${correct}/${total}\n📊 Nota Neta: ${netPercentage}%\n\n¡Anímate a probarla!`;
+    let text = `¡Acabo de completar un test en OPE Farmacia!\n✅ Aciertos: ${correct}/${total}\n📊 Nota Neta: ${netPercentage}%\n\n¡Anímate a probarla!`;
     
     if (testMode === 'examen') {
         const grade10 = ((lastTestResults.netScore / total) * 10).toFixed(2);
         const ptile = document.getElementById('examPercentile').textContent;
-        text = `¡Simulacro OPE Enfermería Completado!\n📝 Nota Oficial: ${grade10}/10\n🏆 Percentil: ${ptile}\n\n¿Puedes superarlo?`;
+        text = `¡Simulacro OPE Farmacia Completado!\n📝 Nota Oficial: ${grade10}/10\n🏆 Percentil: ${ptile}\n\n¿Puedes superarlo?`;
     }
     
     if (navigator.share) {
@@ -3190,7 +3191,7 @@ function shareResult() {
 
 let audioCtx = null;
 function playFeedback(type) {
-    if (localStorage.getItem('appOpeSoundEnabled') === 'false') return;
+    if (localStorage.getItem('appFarmaciaSound') === 'false') return;
     
     // Haptics
     if ('vibrate' in navigator) {
@@ -3241,4 +3242,6 @@ function playFeedback(type) {
         console.error("Audio playback failed", e);
     }
 }
+
+
 
