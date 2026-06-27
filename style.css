@@ -1,3 +1,4 @@
+/* ===== VARIABLES Y SISTEMA DE DISEÑO ===== */
 :root {
     --bg-dark: #09090b;
     --panel-bg: rgba(24, 24, 27, 0.7);
@@ -16,8 +17,88 @@
     
     --font-heading: 'Outfit', sans-serif;
     --font-body: 'Outfit', sans-serif;
+
+    --surface-hover: rgba(255, 255, 255, 0.08);
+    --surface-subtle: rgba(255, 255, 255, 0.05);
+    --surface-input: rgba(255, 255, 255, 0.03);
 }
 
+/* ===== LIGHT MODE ===== */
+body.light-mode {
+    --bg-dark: #f0f2f5;
+    --panel-bg: rgba(255, 255, 255, 0.75);
+    --border-color: rgba(0, 0, 0, 0.1);
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --surface-hover: rgba(0, 0, 0, 0.05);
+    --surface-subtle: rgba(0, 0, 0, 0.03);
+    --surface-input: rgba(0, 0, 0, 0.02);
+}
+
+body.light-mode .glow-orb { opacity: 0.15; }
+
+body.light-mode .glass-panel {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+body.light-mode .premium-btn.secondary {
+    background-color: #e2e8f0;
+    color: #1e293b;
+}
+body.light-mode .premium-btn.secondary:hover {
+    background-color: #cbd5e1;
+}
+
+body.light-mode .option-btn {
+    background: var(--surface-input);
+    border-color: var(--border-color);
+}
+body.light-mode .option-btn:hover:not(:disabled) {
+    background: var(--surface-hover);
+}
+
+body.light-mode .op-letter {
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--text-secondary);
+}
+
+body.light-mode .score-circle {
+    background: radial-gradient(circle, rgba(99,102,241,0.05) 0%, rgba(99,102,241,0.15) 100%);
+}
+
+body.light-mode #noteModal .glass-panel,
+body.light-mode #statsModal .glass-panel,
+body.light-mode #errorModal .glass-panel {
+    background: #fff;
+}
+
+/* Theme toggle button */
+.theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 999;
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
+}
+.theme-toggle:hover {
+    transform: scale(1.1);
+    background: var(--surface-hover);
+}
+
+
+/* ===== REGLAS GLOBALES Y RESET ===== */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -33,6 +114,7 @@ body {
     justify-content: center;
     align-items: center;
     overflow-x: hidden;
+    transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 /* Fondos dinámicos */
@@ -52,6 +134,7 @@ body {
     filter: blur(80px);
     opacity: 0.5;
     animation: float 10s infinite alternate ease-in-out;
+    transition: opacity 0.4s ease;
 }
 
 .orb-1 {
@@ -76,13 +159,19 @@ body {
     100% { transform: translateY(30px) scale(1.05); }
 }
 
-/* Vistas / Pantallas */
+/* ===== PANTALLAS Y CONTENEDORES PRINCIPALES ===== */
 .screen {
     display: none;
     width: 100%;
     max-width: 800px;
-    padding: 2rem;
+    padding: 4rem 2rem 2rem 2rem;
     animation: fadeIn 0.4s ease-out forwards;
+}
+
+@media (max-width: 680px) {
+    .screen {
+        padding: 4.5rem 0.8rem 1rem 0.8rem;
+    }
 }
 
 .screen.active {
@@ -94,7 +183,7 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Paneles Glassmorphism */
+/* ===== COMPONENTES DE UI (BOTONES, PANELES) ===== */
 .glass-panel {
     background: var(--panel-bg);
     backdrop-filter: blur(16px);
@@ -103,6 +192,14 @@ body {
     border-radius: 1.5rem;
     padding: 3rem;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+@media (max-width: 480px) {
+    .glass-panel {
+        padding: 1.25rem;
+        border-radius: 1rem;
+    }
 }
 
 /* Tipografía */
@@ -227,6 +324,13 @@ input[type="file"] {
     hyphens: auto;
 }
 
+@media (max-width: 480px) {
+    .question-text {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+}
+
 .options-container {
     display: flex;
     flex-direction: column;
@@ -236,7 +340,7 @@ input[type="file"] {
 .option-btn {
     text-align: left;
     padding: 1.25rem 1.5rem;
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--surface-input);
     border: 1px solid var(--border-color);
     border-radius: 1rem;
     color: var(--text-primary);
@@ -248,8 +352,16 @@ input[type="file"] {
     align-items: center;
 }
 
+@media (max-width: 480px) {
+    .option-btn {
+        padding: 0.85rem 1rem;
+        font-size: 0.95rem;
+        border-radius: 0.75rem;
+    }
+}
+
 .option-btn:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--surface-hover);
     transform: translateX(4px);
     border-color: rgba(255, 255, 255, 0.2);
 }
@@ -329,6 +441,7 @@ input[type="file"] {
     justify-content: center;
     align-items: center;
     box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+    transition: background 0.4s ease;
 }
 
 .score-number {
@@ -345,6 +458,336 @@ input[type="file"] {
 
 .feedback-msg {
     font-size: 1.2rem;
+    color: var(--text-secondary);
+}
+
+/* ===== PENALTY BREAKDOWN (#7) ===== */
+.penalty-breakdown {
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    text-align: left;
+}
+
+.penalty-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.penalty-row + .penalty-row {
+    border-top: 1px solid var(--border-color);
+}
+
+.penalty-row.total {
+    font-weight: 800;
+    font-size: 1.15rem;
+    border-top: 2px solid var(--accent);
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+}
+
+.penalty-value {
+    font-weight: 700;
+    font-family: 'Outfit', monospace;
+}
+
+.penalty-value.positive { color: var(--success); }
+.penalty-value.negative { color: var(--error); }
+.penalty-value.neutral { color: var(--text-secondary); }
+
+/* ===== QUESTION NAVIGATOR (#10) ===== */
+.question-nav-toggle {
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: var(--font-body);
+    transition: all 0.2s;
+}
+.question-nav-toggle:hover {
+    background: var(--surface-hover);
+    color: var(--text-primary);
+}
+
+.question-nav-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(38px, 1fr));
+    gap: 6px;
+    padding: 1rem;
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    margin-top: 0.75rem;
+    max-height: 200px;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+}
+
+.nav-item {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 2px solid transparent;
+    background: var(--surface-input);
+    color: var(--text-secondary);
+    transition: all 0.15s ease;
+    font-family: var(--font-body);
+}
+
+.nav-item:hover {
+    transform: scale(1.1);
+    border-color: var(--accent);
+}
+
+.nav-item.current {
+    border-color: var(--accent);
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+    color: var(--text-primary);
+}
+
+.nav-item.answered {
+    background: rgba(99, 102, 241, 0.25);
+    color: var(--text-primary);
+}
+
+.nav-item.flagged {
+    border-color: #f59e0b;
+    box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+}
+
+.nav-item.flagged::after {
+    content: '🚩';
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    font-size: 0.5rem;
+}
+
+.nav-item {
+    position: relative;
+}
+
+/* ===== RESULT REVIEW LIST (#2) ===== */
+.result-review-container {
+    max-height: 50vh;
+    overflow-y: auto;
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.result-review-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.result-review-item:hover {
+    background: var(--surface-hover);
+    transform: translateX(4px);
+}
+
+.result-review-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    width: 28px;
+    text-align: center;
+}
+
+.result-review-num {
+    font-weight: 700;
+    color: var(--text-secondary);
+    min-width: 28px;
+    font-size: 0.85rem;
+}
+
+.result-review-text {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-primary);
+}
+
+.result-review-detail {
+    padding: 1rem;
+    margin-top: 0.5rem;
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    animation: slideDown 0.25s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; max-height: 0; transform: translateY(-8px); }
+    to { opacity: 1; max-height: 500px; transform: translateY(0); }
+}
+
+/* ===== MICRO-ANIMATIONS (#4) ===== */
+
+/* Slide transition for questions */
+.question-panel {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.question-panel.slide-out-left {
+    animation: slideOutLeft 0.15s ease-in forwards;
+}
+.question-panel.slide-in-right {
+    animation: slideInRight 0.2s ease-out forwards;
+}
+.question-panel.slide-out-right {
+    animation: slideOutRight 0.15s ease-in forwards;
+}
+.question-panel.slide-in-left {
+    animation: slideInLeft 0.2s ease-out forwards;
+}
+
+@keyframes slideOutLeft {
+    to { opacity: 0; transform: translateX(-30px); }
+}
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideOutRight {
+    to { opacity: 0; transform: translateX(30px); }
+}
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Shake animation for wrong answers */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 50%, 90% { transform: translateX(-4px); }
+    30%, 70% { transform: translateX(4px); }
+}
+.shake {
+    animation: shake 0.4s ease-in-out;
+}
+
+/* Confetti canvas */
+#confettiCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* Score counter-up pulse */
+@keyframes scorePulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+.score-pulse {
+    animation: scorePulse 0.6s ease-in-out;
+}
+
+/* ===== ADVANCED DASHBOARD (#12) ===== */
+.stats-grid-advanced {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card-adv {
+    background: var(--surface-subtle);
+    padding: 1.2rem;
+    border-radius: 1rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s ease;
+}
+.stat-card-adv:hover {
+    transform: translateY(-2px);
+}
+
+.stat-card-adv h3 {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+.stat-card-adv .stat-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.chart-container {
+    background: rgba(0,0,0,0.3);
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+body.light-mode .chart-container {
+    background: rgba(0,0,0,0.04);
+}
+
+.coverage-bar-bg {
+    width: 100%;
+    height: 12px;
+    background: var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+.coverage-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #c084fc);
+    border-radius: 6px;
+    transition: width 0.6s ease;
+}
+
+.trend-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.trend-indicator.up {
+    background: var(--success-bg);
+    color: var(--success);
+}
+.trend-indicator.down {
+    background: var(--error-bg);
+    color: var(--error);
+}
+.trend-indicator.stable {
+    background: var(--surface-subtle);
     color: var(--text-secondary);
 }
 
@@ -393,13 +836,424 @@ input[type="file"] {
     margin-bottom: 2rem;
 }
 
+/* Flag button in test */
+.flag-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.flag-btn.active {
+    color: #f59e0b;
+    border-color: #f59e0b;
+}
+
+/* ===== LOGROS / ACHIEVEMENTS (#11) ===== */
+
+/* Toast de desbloqueo */
+#achievementToast {
+    position: fixed;
+    bottom: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99999;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 1.2rem;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 280px;
+    max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(99,102,241,0.2);
+    transition: bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+}
+
+#achievementToast.show {
+    bottom: 2rem;
+}
+
+.achievement-toast-icon {
+    font-size: 2.2rem;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 8px rgba(255,215,0,0.6));
+    animation: iconBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+
+@keyframes iconBounce {
+    from { transform: scale(0) rotate(-20deg); }
+    to { transform: scale(1) rotate(0deg); }
+}
+
+.achievement-toast-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.achievement-toast-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #a855f7;
+}
+
+.achievement-toast-name {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #f8fafc;
+}
+
+.achievement-toast-desc {
+    font-size: 0.8rem;
+    color: #a1a1aa;
+}
+
+/* Modal de logros */
+#achievementsModal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+    padding: 1rem;
+    backdrop-filter: blur(4px);
+}
+
+#achievementsModal.open {
+    display: flex;
+}
+
+.achievements-panel {
+    background: linear-gradient(135deg, rgba(18,18,27,0.98), rgba(30,30,50,0.98));
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 1.8rem;
+    padding: 2.5rem;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.7), 0 0 40px rgba(99,102,241,0.15);
+    position: relative;
+    animation: panelSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes panelSlideUp {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.achievements-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.achievements-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.achievements-close-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+.achievements-close-btn:hover {
+    background: var(--surface-hover);
+    color: var(--text-primary);
+}
+
+.achievements-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+.achievements-progress-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.3rem;
+}
+
+.achievements-progress-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.achievements-progress-bar-bg {
+    flex: 1;
+    height: 6px;
+    background: var(--border-color);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.achievements-progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #f59e0b, #f97316);
+    border-radius: 3px;
+    transition: width 0.8s ease;
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* Tarjeta de logro */
+.achievement-card {
+    border-radius: 1.2rem;
+    padding: 1.25rem;
+    border: 1px solid;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.achievement-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.achievement-card:hover {
+    transform: translateY(-3px);
+}
+
+/* Estado: bloqueado */
+.achievement-card.locked {
+    background: rgba(255,255,255,0.02);
+    border-color: rgba(255,255,255,0.07);
+    opacity: 0.55;
+    filter: grayscale(0.7);
+}
+
+/* Estado: desbloqueado */
+.achievement-card.unlocked {
+    background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(249,115,22,0.05));
+    border-color: rgba(245,158,11,0.3);
+    box-shadow: 0 4px 20px rgba(245,158,11,0.1);
+}
+
+.achievement-card.unlocked:hover {
+    box-shadow: 0 8px 30px rgba(245,158,11,0.2);
+}
+
+/* Variantes de color por logro */
+.achievement-card.unlocked[data-id="primer_test"] {
+    background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(168,85,247,0.05));
+    border-color: rgba(99,102,241,0.35);
+    box-shadow: 0 4px 20px rgba(99,102,241,0.12);
+}
+.achievement-card.unlocked[data-id="francotirador"] {
+    background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(16,185,129,0.05));
+    border-color: rgba(34,197,94,0.35);
+    box-shadow: 0 4px 20px rgba(34,197,94,0.12);
+}
+.achievement-card.unlocked[data-id="racha_7"] {
+    background: linear-gradient(135deg, rgba(249,115,22,0.1), rgba(245,158,11,0.05));
+    border-color: rgba(249,115,22,0.35);
+    box-shadow: 0 4px 20px rgba(249,115,22,0.12);
+}
+.achievement-card.unlocked[data-id="enciclopedia"] {
+    background: linear-gradient(135deg, rgba(56,189,248,0.1), rgba(99,102,241,0.05));
+    border-color: rgba(56,189,248,0.35);
+    box-shadow: 0 4px 20px rgba(56,189,248,0.12);
+}
+.achievement-card.unlocked[data-id="coleccionista"] {
+    background: linear-gradient(135deg, rgba(250,204,21,0.1), rgba(245,158,11,0.05));
+    border-color: rgba(250,204,21,0.35);
+    box-shadow: 0 4px 20px rgba(250,204,21,0.12);
+}
+
+.achievement-card.unlocked[data-id="decena"] {
+    background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(99,102,241,0.05));
+    border-color: rgba(168,85,247,0.35);
+    box-shadow: 0 4px 20px rgba(168,85,247,0.12);
+}
+
+.achievement-card.unlocked[data-id="perfeccionista"] {
+    background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(249,115,22,0.05));
+    border-color: rgba(239,68,68,0.35);
+    box-shadow: 0 4px 20px rgba(239,68,68,0.12);
+}
+
+.achievement-icon {
+    font-size: 2.2rem;
+    line-height: 1;
+    filter: drop-shadow(0 0 6px rgba(0,0,0,0.3));
+}
+
+.achievement-card.locked .achievement-icon {
+    filter: grayscale(1) opacity(0.4);
+}
+
+.achievement-card.unlocked .achievement-icon {
+    filter: drop-shadow(0 0 8px rgba(255,215,0,0.4));
+}
+
+.achievement-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.achievement-desc {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.achievement-badge {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.achievement-card.unlocked .achievement-badge {
+    background: rgba(245,158,11,0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245,158,11,0.3);
+}
+
+.achievement-card.locked .achievement-badge {
+    background: rgba(255,255,255,0.05);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.achievement-date {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+    opacity: 0.7;
+}
+
+/* Animación de desbloqueo */
+@keyframes unlockGlow {
+    0% { box-shadow: 0 0 0 0 rgba(245,158,11,0.6); }
+    50% { box-shadow: 0 0 20px 8px rgba(245,158,11,0.3); }
+    100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+}
+
+.achievement-card.just-unlocked {
+    animation: unlockGlow 1.2s ease-out 0.3s;
+}
+
+/* Light mode overrides */
+body.light-mode #achievementToast {
+    background: linear-gradient(135deg, #ffffff, #f8fafc);
+    border-color: rgba(0,0,0,0.1);
+    color: #1e293b;
+}
+body.light-mode .achievement-toast-name { color: #1e293b; }
+body.light-mode .achievements-panel {
+    background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.98));
+}
+body.light-mode .achievement-card.locked {
+    background: rgba(0,0,0,0.02);
+    border-color: rgba(0,0,0,0.07);
+}
+
+/* ===== GAMIFICACIÓN (FASE 2) ===== */
+.quest-item {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s;
+}
+.quest-item.completed {
+    background: rgba(74, 222, 128, 0.1);
+    border-color: rgba(74, 222, 128, 0.4);
+}
+.quest-reward-btn {
+    background: linear-gradient(135deg, #a855f7, #6366f1);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(99,102,241,0.3);
+    transition: transform 0.2s;
+}
+.quest-reward-btn:hover {
+    transform: translateY(-2px);
+}
+.quest-reward-btn:disabled {
+    background: var(--surface-subtle);
+    color: var(--text-secondary);
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+}
+
 /* Mobile Optimizations */
+
+/* ===== RESPONSIVIDAD (MEDIA QUERIES) ===== */
 @media (max-width: 600px) {
     .glass-panel {
         padding: 1.5rem;
     }
     .history-grid {
         grid-template-columns: 1fr;
+    }
+    .stats-grid-advanced {
+        grid-template-columns: repeat(2, 1fr);
     }
     .gradient-text {
         font-size: 2rem;
@@ -414,4 +1268,181 @@ input[type="file"] {
     .score-number {
         font-size: 3rem;
     }
+    .question-nav-grid {
+        grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+    }
+    .achievements-grid {
+        grid-template-columns: 1fr;
+    }
+    .achievements-panel {
+        padding: 1.5rem;
+    }
+}
+
+/* Extra Small Mobile (≤ 420px) */
+@media (max-width: 420px) {
+    .glass-panel {
+        padding: 1rem;
+        border-radius: 0.875rem;
+    }
+    .gradient-text {
+        font-size: 1.6rem;
+    }
+    .subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.25rem;
+    }
+    .premium-btn, .upload-btn {
+        padding: 0.8rem 1.2rem;
+        font-size: 0.95rem;
+    }
+    .stats-grid-advanced {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+    .stat-card-adv .stat-value {
+        font-size: 1.2rem;
+    }
+    .score-circle {
+        width: 120px;
+        height: 120px;
+    }
+    .score-number {
+        font-size: 2.4rem;
+    }
+    .score-max {
+        font-size: 1.1rem;
+    }
+    /* Test header more compact on small phones */
+    .test-header {
+        margin-bottom: 1rem;
+    }
+    .progress-stats {
+        font-size: 0.75rem;
+    }
+    #currentQuestionNumber {
+        font-size: 0.75rem;
+    }
+    /* Make flag/fav/note buttons smaller */
+    #toggleFavoriteBtn, #openNoteBtn, .flag-btn {
+        padding: 0.35rem !important;
+        font-size: 1rem !important;
+    }
+    /* Pause/exit buttons more compact */
+    #pauseTestBtn, #exitTestBtn {
+        padding: 0.4rem 0.6rem !important;
+        font-size: 0.8rem !important;
+    }
+    /* Result review section */
+    .result-review-container {
+        max-height: 40vh;
+    }
+    /* Search screen */
+    #searchScreen .glass-panel {
+        padding: 1rem;
+    }
+    /* History screen */
+    #historyScreen .glass-panel {
+        padding: 1rem;
+    }
+    /* Achievement toast smaller on very small screens */
+    #achievementToast {
+        min-width: 240px;
+        padding: 0.75rem 1rem;
+    }
+}
+
+/* ===== MODAL DE AUTENTICACIÓN PREMIUM (FASE 4) ===== */
+.modal-overlay {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.modal-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.auth-panel {
+    background: rgba(24, 24, 27, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6) !important;
+}
+
+body.light-mode .auth-panel {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.google-auth-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Animación y color del botón superior cuando está sincronizado */
+#cloudAuthTriggerBtn.synced {
+    border-color: rgba(34, 197, 94, 0.4) !important;
+    background: rgba(34, 197, 94, 0.08) !important;
+}
+#cloudAuthTriggerBtn.synced:hover {
+    background: rgba(34, 197, 94, 0.15) !important;
+    transform: scale(1.05);
+}
+
+/* ===== TOGGLE SWITCH ===== */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--surface-input);
+  transition: .4s;
+  border: 1px solid var(--border-color);
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--text-secondary);
+  transition: .4s;
+}
+input:checked + .slider {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+input:checked + .slider:before {
+  transform: translateX(26px);
+  background-color: white;
+}
+.slider.round {
+  border-radius: 24px;
+}
+.slider.round:before {
+  border-radius: 50%;
 }
