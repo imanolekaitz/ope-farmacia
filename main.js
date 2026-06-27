@@ -1,4 +1,4 @@
-﻿/** 
+/** 
  * SELECTORES DE PANTALLAS PRINCIPALES
  * Se utilizan para alternar la visibilidad de las diferentes secciones de la aplicación.
  */
@@ -2486,8 +2486,8 @@ const ACHIEVEMENTS = [
     { id: 'racha_100', icon: '👑', name: 'Opositor Legendario', desc: '100 días seguidos estudiando.', check: (ctx) => (ctx && ctx.context === 'streak' && ctx.streak >= 100) || JSON.parse(localStorage.getItem('appFarmaciaStreak') || '{"streak":0}').streak >= 100 },
     
     // Temario
-    { id: 'explorador', icon: '🧭', name: 'Explorador', desc: 'Vistas 100 preguntas distintas.', check: () => Object.keys(JSON.parse(localStorage.getItem('appFarmaciaStats') || '{}')).length >= 100 },
-    { id: 'enciclopedia', icon: '📚', name: 'Enciclopedia', desc: 'Vistas 500 preguntas distintas.', check: () => Object.keys(JSON.parse(localStorage.getItem('appFarmaciaStats') || '{}')).length >= 500 },
+    { id: 'explorador', icon: '🧭', name: 'Explorador', desc: 'Vistas 50 preguntas distintas.', check: () => Object.keys(JSON.parse(localStorage.getItem('appFarmaciaStats') || '{}')).length >= 50 },
+    { id: 'enciclopedia', icon: '📚', name: 'Enciclopedia', desc: 'Vistas 150 preguntas distintas.', check: () => Object.keys(JSON.parse(localStorage.getItem('appFarmaciaStats') || '{}')).length >= 150 },
     { id: 'omnisciente', icon: '👁️', name: 'Omnisciente', desc: 'Vistas todas las preguntas del repositorio.', check: () => allQuestions.length > 0 && Object.keys(JSON.parse(localStorage.getItem('appFarmaciaStats') || '{}')).length >= allQuestions.length },
     
     // Específicos
